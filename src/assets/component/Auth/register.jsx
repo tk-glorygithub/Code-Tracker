@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { auth, db } from "./firebase";
 import { setDoc, doc } from "firebase/firestore";
@@ -19,12 +19,18 @@ function Register() {
       const user = userCredential.user;
       console.log(user);
 
+      // Update the user's profile with their first and last name
+      await updateProfile(user, {
+        displayName: `${fname} ${lname}`,
+      });
+
+      // Save user details to Firestore
       if (user) {
         await setDoc(doc(db, "Users", user.uid), {
           email: user.email,
           firstName: fname,
           lastName: lname,
-          photo: "",
+          photo: user.photoURL || "", // Save the photoURL from Firebase Auth
         });
         console.log("User Registered Successfully!!");
         toast.success("User Registered Successfully!!", {

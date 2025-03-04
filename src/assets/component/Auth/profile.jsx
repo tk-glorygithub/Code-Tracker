@@ -5,21 +5,22 @@ import './auth.css';
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
-  // Inside your component
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState(null);
 
   const fetchUserData = async () => {
     auth.onAuthStateChanged(async (user) => {
-      console.log(user);
+      if (user) {
+        console.log(user);
 
-      const docRef = doc(db, "Users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setUserDetails(docSnap.data());
-        console.log(docSnap.data());
-      } else {
-        console.log("User is not logged in");
+        const docRef = doc(db, "Users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserDetails(docSnap.data());
+          console.log(docSnap.data());
+        } else {
+          console.log("User is not logged in");
+        }
       }
     });
   };
@@ -27,10 +28,10 @@ function Profile() {
   useEffect(() => {
     fetchUserData();
 
-    // Redirect to Home after 3 seconds
+    // Redirect to Home after 8 seconds
     const timer = setTimeout(() => {
       navigate("/home");
-    }, 8000); // 3000ms = 3 seconds
+    }, 8000); // 8000ms = 8 seconds
 
     // Cleanup the timer on component unmount
     return () => clearTimeout(timer);
@@ -47,7 +48,6 @@ function Profile() {
   }
 
   return (
-    
     <div className="App">
       <div className="auth-wrapper">
         <div className="auth-inner">
@@ -55,20 +55,24 @@ function Profile() {
             {userDetails ? (
               <>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <img
-                    src={userDetails.photo}
-                    width={"50%"}
-                    style={{ borderRadius: "50%" }}
-                    alt="User"
-                  />
+                  {userDetails.photo ? (
+                    <img
+                      src={userDetails.photo}
+                      width={"50%"}
+                      style={{ borderRadius: "50%" }}
+                      alt="User"
+                    />
+                  ) : (
+                    <div style={{ width: "50%", textAlign: "center" }}>
+                      No profile image
+                    </div>
+                  )}
                 </div>
                 <br />
-               
                 <h3>Welcome {userDetails.firstName} 🙏🙏</h3>
                 <div>
                   <p>Email: {userDetails.email}</p>
                   <p>User: {userDetails.firstName}</p>
-                  {/* <p>Last Name: {userDetails.lastName}</p> */}
                 </div>
                 <div className="Website">
                   <button className="btn btn-primary" onClick={() => navigate('/home')}>
@@ -78,20 +82,18 @@ function Profile() {
                     Logout
                   </button>
                 </div>
-                    <div>
-     <br/>
-      <p>You will be redirected to the home page shortly...</p>
-    </div>
+                <div>
+                  <br />
+                  <p>You will be redirected to the home page shortly...</p>
+                </div>
               </>
             ) : (
-          <p></p>
-            )
-            }
+              <p>Loading...</p>
+            )}
           </div>
         </div>
       </div>
     </div>
-    
   );
 }
 

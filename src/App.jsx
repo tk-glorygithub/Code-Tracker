@@ -16,6 +16,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Profile from "./assets/component/Auth/profile";
 import { auth } from "./assets/component/Auth/firebase";
+import OnlineTest from "./assets/component/Test/OnlineTest"; // Import the OnlineTest component
+import ProctoringDashboard from "./assets/component/Test/ProctoringDashboard"; // Import the ProctoringDashboard component
 
 function App() {
   const [user, setUser] = useState(null);
@@ -65,6 +67,13 @@ function AppContent({ user }) {
         {/* Other public routes */}
         <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
+        
+        {/* Online Test route */}
+        <Route path="/online-test" element={user ? <OnlineTest /> : <Navigate to="/login" />} />
+        
+        {/* Proctoring Dashboard route */}
+        <Route path="/proctoring-dashboard" element={user ? <ProctoringDashboard /> : <Navigate to="/login" />} />
+        
         <Route path="/contact" element={<Contacts />} />
         
         {/* 404 Page route */}
